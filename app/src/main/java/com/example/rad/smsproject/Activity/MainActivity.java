@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 items = line.split(";");
                 for (String item : items)
                 {
-                    smsNumbers.add(item);
+                    smsNumbers.add(item.replace("-", ""));
                 }
 
             }
@@ -216,6 +216,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendSMS(String number, String message){
-        SmsManager.getDefault().sendTextMessage(number, null, message, null, null);
+        try {
+            if(!number.isEmpty()) {
+                SmsManager.getDefault().sendTextMessage(number, null, message, null, null);
+            }
+        }catch (Exception e){
+            Toast.makeText(MainActivity.this,number +"  "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
