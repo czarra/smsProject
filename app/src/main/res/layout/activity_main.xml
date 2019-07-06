@@ -5,33 +5,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.MainActivity">
-
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="33dp"
-            android:textSize="20dp"
-            android:text="@string/textSMS" />
-
-        <EditText
-            android:id="@+id/smsText"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-
-        <Button
-            android:id="@+id/sendSMS"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:background="@drawable/button"
-            android:text="@string/send"
-            android:textColor="@color/buttonText" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/openFile"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginTop="33dp"
+                android:background="@drawable/button"
+                android:text="@string/openFile"
+                android:textColor="@color/buttonText" />
+            <TextView
+                android:id="@+id/fileName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:visibility="invisible"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="33dp"
+                android:textSize="20dp"
+                android:text="@string/textSMS" />
+
+            <EditText
+                android:id="@+id/smsText"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <Button
+                android:id="@+id/sendSMS"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:background="@drawable/button"
+                android:text="@string/send"
+                android:textColor="@color/buttonText" />
+        </LinearLayout>
+
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -4,5 +4,6 @@
     <string name="send">Send</string>
 
     <string name="textSMS">SMS text</string>
+    <string name="openFile">Open file(*.txt)</string>
 
 </resources>
