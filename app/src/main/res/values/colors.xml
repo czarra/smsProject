@@ -3,4 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="button">#000</color>
+    <color name="text">#000</color>
+    <color name="buttonText">#FFF</color>
+    <color name="spinner">#EEEEEE</color>
 </resources>

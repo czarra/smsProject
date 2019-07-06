@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SmsProject</string>
+
+    <string name="send">Send</string>
+
+    <string name="textSMS">SMS text</string>
+
 </resources>
