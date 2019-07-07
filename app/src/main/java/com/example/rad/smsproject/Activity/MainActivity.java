@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,6 +27,9 @@ import android.widget.Toast;
 
 import com.example.rad.smsproject.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView fileName;
     private Uri selectedfile;
     private ProgressBar progressBar;
+    private String textToSend;
     private File file;
 //    private String[] smsNumbers = {
 //
@@ -62,36 +67,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(file != null  && getExtension(file).equals("txt")) {
-                    sendSMS.setVisibility(View.INVISIBLE);
-                    openFile.setVisibility(View.INVISIBLE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    String textToSend = smsText.getText().toString();
-                    if (!smsText.getText().toString().isEmpty()) {
-                        setSmsNumbers(file);
-                        if(!smsNumbers.isEmpty()) {
-                            for (String number : smsNumbers) {
-                                Log.e("number", number);
-                                try {
-                                    if (checkPermission()) {
-                                        sendSMS(number,textToSend  + basicMessage);
-                                    }
-                                } catch (android.content.ActivityNotFoundException ex) {
-                                    Toast.makeText(MainActivity.this, "Can't send SMS", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        } else {
-                            Toast.makeText(MainActivity.this, "Empty phone list", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, "Message can't be empty!!!", Toast.LENGTH_SHORT).show();
+
+                RetrieveSend retrieveSend = new RetrieveSend() {
+                    @Override
+                    protected void onPreExecute() {
+//                        if(file != null  && getExtension(file).equals("txt")) {
+                            sendSMS.setVisibility(View.INVISIBLE);
+                            openFile.setVisibility(View.INVISIBLE);
+                            progressBar.setVisibility(View.VISIBLE);
+                            textToSend = smsText.getText().toString();
+
+//                        } else {
+//                            Toast.makeText(MainActivity.this, "Please choose a file (.txt)!!!", Toast.LENGTH_SHORT).show();
+//                        }
+
                     }
-                    sendSMS.setVisibility(View.VISIBLE);
-                    openFile.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(MainActivity.this, "Please choose a file (.txt)!!!", Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    protected void onPostExecute(String error) {
+                        if(!error.isEmpty()) {
+                            Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+                        }
+                        sendSMS.setVisibility(View.VISIBLE);
+                        openFile.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                };
+                retrieveSend.execute();
+
             }
 
         });
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                 items = line.split(";");
                 for (String item : items)
                 {
-                    smsNumbers.add(item.replace("-", ""));
+                    smsNumbers.add(item.replace("-", "").replace(" ",""));
                 }
 
             }
@@ -215,13 +217,63 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void sendSMS(String number, String message){
+    private String sendSMS(String number, String message){
+        String err = "";
         try {
             if(!number.isEmpty()) {
                 SmsManager.getDefault().sendTextMessage(number, null, message, null, null);
             }
         }catch (Exception e){
-            Toast.makeText(MainActivity.this,number +"  "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,number +"  "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            err = e.getMessage();
+        }
+        return err;
+    }
+
+    class RetrieveSend extends AsyncTask<String, String, String> {
+
+        protected String doInBackground(String... urls) {
+            String error = "Done!";
+            Integer iterator = 0;
+            try {
+                if(file != null  && getExtension(file).equals("txt")) {
+                    if (!smsText.getText().toString().isEmpty()) {
+                        setSmsNumbers(file);
+                        if (!smsNumbers.isEmpty()) {
+                            for (String number : smsNumbers) {
+                                Log.e("number", number);
+                                try {
+                                    if (checkPermission()) {
+                                       String err = sendSMS(number, textToSend + basicMessage);
+                                       if(!err.isEmpty()){
+                                           iterator ++;
+                                       }
+                                    }
+                                } catch (android.content.ActivityNotFoundException ex) {
+//                                    Toast.makeText(MainActivity.this, "Can't send SMS", Toast.LENGTH_SHORT).show();
+                                    error =  "Can't send SMS";
+                                }
+                            }
+                        } else {
+//                            Toast.makeText(MainActivity.this, "Empty phone list", Toast.LENGTH_SHORT).show();
+                            error = "Empty phone list";
+                        }
+                    } else {
+//                        Toast.makeText(MainActivity.this, "Message can't be empty!!!", Toast.LENGTH_SHORT).show();
+                        error = "Message can't be empty!!!";
+                    }
+                    if(iterator>0){
+                        error = "Wrong data in "+iterator+" numbers";
+                    }
+                } else {
+                    error = "Please choose a file (.txt)!!!";
+                }
+            } catch (Exception exp) {
+                Log.e("error", exp.getMessage());
+                error =  exp.getMessage();
+//                return false;
+            }
+            return error;
         }
     }
 }
