@@ -164,11 +164,13 @@ public class MainActivity extends AppCompatActivity {
                     fileName.setText(file.getName());
                     fileName.setVisibility(View.VISIBLE);
                 } else {
+                    Toast.makeText(MainActivity.this, "Please choose a file (.txt)!!!", Toast.LENGTH_SHORT).show();
                     fileName.setVisibility(View.INVISIBLE);
                     file = null;
                 }
             } else {
                 Log.e("error","file not exist");
+                Toast.makeText(MainActivity.this, "Can't open File", Toast.LENGTH_SHORT).show();
                 fileName.setVisibility(View.INVISIBLE);
                 file = null;
             }
